@@ -1,17 +1,21 @@
+// Import functions
+import { initdb, postDb, deleteDb, editDb } from "./database";
+import { fetchCards } from "./card";
 import { toggleForm, clearForm } from "./form";
-import { Tooltip, Toast, Popover } from "bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import Logo from "../images/logo.png";
-import Bear from "../images/bear.png";
-import Dog from "../images/dog.png";
 
 // Import CSS files
 import "../css/index.css";
 
-import { initdb, getDb, postDb, deleteDb, editDb } from "./database";
-import { fetchCards } from "./card";
+// Import Bootstrap
+import { Tooltip, Toast, Popover } from "bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
+// Import images
+import Logo from "../images/logo.png";
+import Bear from "../images/bear.png";
+import Dog from "../images/dog.png";
+
+// On load functionality
 window.addEventListener("load", function () {
   initdb();
   fetchCards();
@@ -20,6 +24,7 @@ window.addEventListener("load", function () {
   document.getElementById("dogThumbnail").src = Dog;
 });
 
+// Form functionality
 const form = document.getElementById("formToggle");
 const newContactButton = document.getElementById("new-contact");
 let submitBtnToUpdate = false;
@@ -30,7 +35,7 @@ newContactButton.addEventListener("click", (event) => {
 });
 
 form.addEventListener("submit", (event) => {
-  // Handle data
+  // handle the form data
   event.preventDefault();
   let name = document.getElementById("name").value;
   let phone = document.getElementById("phone").value;
@@ -41,6 +46,7 @@ form.addEventListener("submit", (event) => {
   if (submitBtnToUpdate == false) {
     postDb(name, email, phone, profile);
   } else {
+    // Obtains values passed into the form element
     let name = document.getElementById("name").value;
     let phone = document.getElementById("phone").value;
     let email = document.getElementById("email").value;
@@ -50,6 +56,7 @@ form.addEventListener("submit", (event) => {
     editDb(profileId, name, email, phone, profile);
 
     fetchCards();
+
     // Toggles the submit button back to POST functionality
     submitBtnToUpdate = false;
   }
@@ -62,9 +69,14 @@ form.addEventListener("submit", (event) => {
   fetchCards();
 });
 
+// Card functionality
+// Adds deleteCard() to the global scope so each card has access to it.
 window.deleteCard = (e) => {
+  // Grabs the id from the button element attached to the contact card.
   let id = parseInt(e.id);
+  // Delete the card
   deleteDb(id);
+  // Reload the DOM
   fetchCards();
 };
 
@@ -87,11 +99,16 @@ window.editCard = (e) => {
   submitBtnToUpdate = true;
 };
 
+// Checks to see if serviceWorker exists in the navigator and installs our service worker configurations
 if ("serviceWorker" in navigator) {
-  // Use the window load event to keep the page load performant
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
+  navigator.serviceWorker
+    .register("./service-worker.js")
+    .then(function (reg) {
+      console.log("Successfully registered service worker", reg);
+    })
+    .catch(function (err) {
+      console.warn("Error whilst registering service worker", err);
+    });
 }
 
 // Install button
