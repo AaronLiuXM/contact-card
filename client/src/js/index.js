@@ -6,7 +6,7 @@ import Logo from "../images/logo.png";
 import Bear from "../images/bear.png";
 import Dog from "../images/dog.png";
 
-import { initdb, getDb, postDb } from "./database";
+import { initdb, getDb, postDb, deleteDb } from "./database";
 import { fetchCards } from "./card";
 
 window.addEventListener("load", function () {
@@ -50,6 +50,12 @@ form.addEventListener("submit", (event) => {
   // Reload the DOM
   fetchCards();
 });
+
+window.deleteCard = (e) => {
+  let id = parseInt(e.id);
+  deleteDb(id);
+  fetchCards();
+};
 
 // Import CSS files
 import "../css/index.css";
